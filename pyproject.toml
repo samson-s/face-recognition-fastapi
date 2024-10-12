@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "face-recognition-api"
+version = "0.1.0"
+description = ""
+authors = ["Samson Hui <hui.kawang@yahoo.com.hk>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = {extras = ["standard"], version = "^0.115.0"}
+face-recognition = "^1.3.0"
+numpy = "^2.1.2"
+pillow = "^10.4.0"
+face-recognition-models = {git = "https://github.com/ageitgey/face_recognition_models"}
+setuptools = "^75.1.0"
+qdrant-client = "^1.12.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^3.3.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

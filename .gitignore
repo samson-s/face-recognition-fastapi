@@ -1,0 +1,4 @@
+images/
+qdrant_db/
+
+__pycache__/
