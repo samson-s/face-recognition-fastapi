@@ -74,3 +74,28 @@ def convert_locations_before_compress(
         )
         for top, right, bottom, left in face_locations
     ]
+
+
+def convert_locations_after_compress(
+    face_locations: list[tuple[int, int, int, int]],
+    original_height: int,
+    compressed_height: int,
+):
+    """
+    This funciton converts the face locations from the original image
+    to the compressed image size.
+    """
+    ratio = compressed_height / original_height
+
+    if ratio == 1:
+        return face_locations
+
+    return [
+        (
+            int(top * ratio),
+            int(right * ratio),
+            int(bottom * ratio),
+            int(left * ratio),
+        )
+        for top, right, bottom, left in face_locations
+    ]

@@ -9,7 +9,8 @@ from .image_storage import LocalImageStorage, ImageStorage
 from .image_processing import\
     from_upload_file_to_pil_image, \
     compress_image, \
-    convert_locations_before_compress
+    convert_locations_before_compress, \
+    convert_locations_after_compress
 import numpy as np
 
 
@@ -95,14 +96,26 @@ async def add_face(
     request: Request,
     file: UploadFile,
     name: str,
+    location: str
 ):
-    image = compress_image(from_upload_file_to_pil_image(file))
+    image = from_upload_file_to_pil_image(file)
+    original_height = image.height
+
+    image = compress_image(image, max_height=1000)
     image_array = np.array(image)
 
     # Assume and only one face is allowed
-    location = face_recognition.face_locations(image_array)[0]
-    face_encoding = face_recognition.face_encodings(
-        image_array, known_face_locations=[location])[0]
+    if location:
+        location = list(map(int, location.split(",")))
+    else:
+        location = face_recognition.face_locations(image_array)[0]
+
+    location = convert_locations_after_compress(
+        [location], original_height, image.height)[0]
+
+    face_encodings = face_recognition.face_encodings(
+        image_array, known_face_locations=[location])
+    face_encoding = face_encodings[0]
 
     vector_db: VectorDB = request.app.state.vector_db
 

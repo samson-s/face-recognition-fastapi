@@ -57,7 +57,6 @@ class VectorDB:
         """
         Query the collection by vector
         """
-        print(vector)
         result = await self.qdrant_client.query_points(
             self.collection, vector, limit=top_k, with_vectors=True
         )
