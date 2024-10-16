@@ -7,9 +7,9 @@ from typing import Optional
 from .vector_db import VectorDB
 from .image_storage import LocalImageStorage, ImageStorage
 from .image_processing import\
-    from_upload_file_to_np_array, \
     from_upload_file_to_pil_image, \
-    compress_image
+    compress_image, \
+    convert_locations_before_compress
 import numpy as np
 
 
@@ -28,23 +28,41 @@ app = FastAPI(lifespan=lifespan)
 
 @app.post("/find_faces")
 async def find_faces(file: UploadFile):
-    image = from_upload_file_to_np_array(file, max_height_for_compress=1000)
-    face_locations = face_recognition.face_locations(image)
+    image = from_upload_file_to_pil_image(file)
+    original_height = image.height
+
+    image = compress_image(image, max_height=1000)
+    imageArray = np.array(image)
+
+    face_locations = face_recognition.face_locations(imageArray)
+    face_locations = convert_locations_before_compress(
+        face_locations, original_height, image.height
+    )
+
     return {"face_locations": face_locations}
 
 
 @app.post("/recognize_faces")
 async def recognize_faces(request: Request, file: UploadFile):
-    image = from_upload_file_to_np_array(file, max_height_for_compress=1000)
-    face_locations = face_recognition.face_locations(image)
+    image = from_upload_file_to_pil_image(file)
+    original_height = image.height
+
+    image = compress_image(image, max_height=1000)
+    imageArray = np.array(image)
+
+    face_locations = face_recognition.face_locations(imageArray)
+    original_face_locations = convert_locations_before_compress(
+        face_locations, original_height, image.height
+    )
+
     face_encodings = face_recognition.face_encodings(
-        image, known_face_locations=face_locations
+        imageArray, known_face_locations=face_locations
     )
 
     vector_db: VectorDB = request.app.state.vector_db
 
     results = []
-    for i in range(len(face_locations)):
+    for i in range(len(original_face_locations)):
         found_faces = await vector_db.query(face_encodings[i], top_k=1)
         found_face = found_faces[0]
 
@@ -60,7 +78,7 @@ async def recognize_faces(request: Request, file: UploadFile):
 
         result = {
             'name': 'Unknown',
-            'location': face_locations[i],
+            'location': original_face_locations[i],
         }
         if compare_result:
             result['id'] = found_face.id

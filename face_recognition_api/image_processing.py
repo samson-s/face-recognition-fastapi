@@ -48,3 +48,29 @@ def compress_image(image, max_height=1000):
             (image.width * max_height // image.height, max_height)
         )
     return image
+
+
+def convert_locations_before_compress(
+    face_locations: list[tuple[int, int, int, int]],
+    original_height: int,
+    compressed_height: int,
+):
+    """
+    This funciton converts the face locations from the compressed image
+    to the original image size. This is necessary since the face locations
+    are returned as pixel coordinates in the compressed image
+    """
+    ratio = original_height / compressed_height
+
+    if ratio == 1:
+        return face_locations
+
+    return [
+        (
+            int(top * ratio),
+            int(right * ratio),
+            int(bottom * ratio),
+            int(left * ratio),
+        )
+        for top, right, bottom, left in face_locations
+    ]
