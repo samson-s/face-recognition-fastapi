@@ -1,14 +1,21 @@
 from qdrant_client import AsyncQdrantClient, models
 from typing import List, Tuple, Optional
-
-
-QDRANT_COLLECTION = "face_encodings"
+from face_recognition_api.settings import get_settings
 
 
 class VectorDB:
     def __init__(self):
-        self.qdrant_client = AsyncQdrantClient(path="qdrant_db")
-        self.collection = QDRANT_COLLECTION
+        settings = get_settings()
+
+        if (settings.QDRANT_MODE == "local"):
+            self.qdrant_client = AsyncQdrantClient(path=settings.QDRANT_PATH)
+        elif (settings.QDRANT_MODE == "remote"):
+            self.qdrant_client = AsyncQdrantClient(
+                host=settings.QDRANT_HOST,
+                api_key=settings.QDRANT_API_KEY,
+            )
+
+        self.collection = settings.QDRANT_COLLECTION
 
     @classmethod
     async def create(cls):

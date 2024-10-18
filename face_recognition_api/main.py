@@ -57,25 +57,30 @@ async def recognize_faces(request: Request, file: UploadFile):
     )
 
     face_encodings = face_recognition.face_encodings(
-        imageArray, known_face_locations=face_locations
+        imageArray,
+        known_face_locations=face_locations,
+        num_jitters=1 if len(face_locations) > 5 else 10,
+        model="large"
     )
 
     vector_db: VectorDB = request.app.state.vector_db
 
     results = []
     for i in range(len(original_face_locations)):
-        found_faces = await vector_db.query(face_encodings[i], top_k=1)
-        found_face = found_faces[0]
+        compare_result = False
 
-        # face_recognition.compare_faces takes a list of face encodings
-        # and compares them to a known face encoding.
-        # It returns a list of True/False values indicating whether or
-        # not the known face matched the input face
-        compare_result = face_recognition.compare_faces(
-            [found_face.vector],
-            face_encodings[i],
-            0.5
-        )[0]
+        found_faces = await vector_db.query(face_encodings[i], top_k=1)
+        if found_faces:
+            found_face = found_faces[0]
+            # face_recognition.compare_faces takes a list of face encodings
+            # and compares them to a known face encoding.
+            # It returns a list of True/False values indicating whether or
+            # not the known face matched the input face
+            compare_result = face_recognition.compare_faces(
+                [found_face.vector],
+                face_encodings[i],
+                0.4
+            )[0]
 
         result = {
             'name': 'Unknown',
@@ -114,7 +119,11 @@ async def add_face(
         [location], original_height, image.height)[0]
 
     face_encodings = face_recognition.face_encodings(
-        image_array, known_face_locations=[location])
+        image_array,
+        known_face_locations=[location],
+        num_jitters=20,
+        model="large"
+    )
     face_encoding = face_encodings[0]
 
     vector_db: VectorDB = request.app.state.vector_db

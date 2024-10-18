@@ -14,6 +14,7 @@ pillow = "^10.4.0"
 face-recognition-models = {git = "https://github.com/ageitgey/face_recognition_models"}
 setuptools = "^75.1.0"
 qdrant-client = "^1.12.0"
+pydantic-settings = "^2.6.0"
 
 
 [tool.poetry.group.dev.dependencies]
