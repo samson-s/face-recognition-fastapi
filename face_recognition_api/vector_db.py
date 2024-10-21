@@ -13,11 +13,14 @@ class VectorDB:
             print("Connecting to Qdrant remote")
             print(f"Host: {settings.QDRANT_HOST}")
             print(f"Port: {settings.QDRANT_PORT}")
+            print(f"GRPC Port: {settings.QDRANT_GRPC_PORT}")
+            print(f"Prefer GRPC: {settings.QDRANT_PREFER_GRPC}")
             self.qdrant_client = AsyncQdrantClient(
                 host=settings.QDRANT_HOST,
+                https=settings.QDRANT_HTTPS,
                 port=settings.QDRANT_PORT,
                 grpc_port=settings.QDRANT_GRPC_PORT,
-                prefer_grpc=settings.QDRANT_PREFER_GRP,
+                prefer_grpc=settings.QDRANT_PREFER_GRPC,
                 api_key=settings.QDRANT_API_KEY,
             )
 
