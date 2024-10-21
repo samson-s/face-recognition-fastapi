@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     QDRANT_API_KEY: str | None = None
     QDRANT_COLLECTION: str = "face_encodings"
     QDRANT_PORT: int = 6333
+    QDRANT_GRPC_PORT: int = 6334
+    QDRANT_PREFER_GRP: bool = True
 
 
 @lru_cache()
