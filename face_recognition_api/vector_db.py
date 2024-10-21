@@ -16,6 +16,8 @@ class VectorDB:
             self.qdrant_client = AsyncQdrantClient(
                 host=settings.QDRANT_HOST,
                 port=settings.QDRANT_PORT,
+                grpc_port=settings.QDRANT_GRPC_PORT,
+                prefer_grpc=settings.QDRANT_PREFER_GRP,
                 api_key=settings.QDRANT_API_KEY,
             )
 
