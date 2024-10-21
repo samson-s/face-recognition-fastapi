@@ -11,6 +11,6 @@ RUN apt-get install -y --fix-missing \
 RUN pip install --upgrade pip
 RUN pip install poetry
 RUN poetry install
-CMD ["poetry", "run", "fastapi", "run", "face_recognition_api/main.py"]
+CMD ["poetry", "run", "fastapi", "run", "--host", "::", "face_recognition_api/main.py"]
 
 EXPOSE 8000
