@@ -1,0 +1,6 @@
+[build]
+builder = 'nixpacks'
+buildCommand = 'poetry install'
+
+[deploy]
+startCommand = 'poetry run face_recognition_api main.py'
