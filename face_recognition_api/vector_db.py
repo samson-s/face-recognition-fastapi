@@ -10,6 +10,9 @@ class VectorDB:
         if (settings.QDRANT_MODE == "local"):
             self.qdrant_client = AsyncQdrantClient(path=settings.QDRANT_PATH)
         elif (settings.QDRANT_MODE == "remote"):
+            print("Connecting to Qdrant remote")
+            print(f"Host: {settings.QDRANT_HOST}")
+            print(f"Port: {settings.QDRANT_PORT}")
             self.qdrant_client = AsyncQdrantClient(
                 host=settings.QDRANT_HOST,
                 port=settings.QDRANT_PORT,
