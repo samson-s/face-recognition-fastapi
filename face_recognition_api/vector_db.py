@@ -12,6 +12,7 @@ class VectorDB:
         elif (settings.QDRANT_MODE == "remote"):
             self.qdrant_client = AsyncQdrantClient(
                 host=settings.QDRANT_HOST,
+                port=settings.QDRANT_PORT,
                 api_key=settings.QDRANT_API_KEY,
             )
 
